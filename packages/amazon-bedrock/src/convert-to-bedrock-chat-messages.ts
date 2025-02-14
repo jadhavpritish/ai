@@ -72,7 +72,6 @@ export function convertToBedrockChatMessages(
             case 'user': {
               for (let j = 0; j < content.length; j++) {
                 const part = content[j];
-
                 const cacheControl = getCacheControl(part.providerMetadata);
 
                 switch (part.type) {
@@ -140,6 +139,7 @@ export function convertToBedrockChatMessages(
             case 'tool': {
               for (let i = 0; i < content.length; i++) {
                 const part = content[i];
+                const cacheControl = getCacheControl(part.providerMetadata);
 
                 bedrockContent.push({
                   toolResult: {
@@ -147,6 +147,10 @@ export function convertToBedrockChatMessages(
                     content: [{ text: JSON.stringify(part.result) }],
                   },
                 });
+
+                if (cacheControl !== undefined) {
+                  bedrockContent.push(cacheControl as BedrockCacheControl);
+                }
               }
 
               break;
@@ -292,6 +296,5 @@ function groupIntoBlocks(
       }
     }
   }
-
   return blocks;
 }
